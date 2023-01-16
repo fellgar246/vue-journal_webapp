@@ -25,7 +25,9 @@
         ></textarea>
     </div>
 
-    <Fab />
+    <Fab 
+        icon="fa-save"
+    />
 
     <img 
         src="https://www.viajar365.com/wp-content/uploads/2021/07/bergen.jpg" 
