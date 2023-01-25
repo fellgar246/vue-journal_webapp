@@ -3,7 +3,7 @@
     <template v-if="entry">
         <div class="entry-title d-flex justify-content-between p-2">
             <div>
-                <span class="text-sucess fs-3 fw-bold">{{ 15 }}</span>
+                <span class="text-sucess fs-3 fw-bold">{{ day }}</span>
                 <span class="mx-1 fs-3">{{ month }}</span>
                 <span class="mx-2 fs-4 fw-light">{{ yearDay }}</span>
             </div>
@@ -36,13 +36,14 @@
 
     <Fab 
         icon="fa-save"
-    />
+        @on:click="saveEntry"
+    />|
 
 </template>
 
 <script>
 import { defineAsyncComponent } from 'vue'
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 import getDayMonthYear from '../helpers/getDayMonthYear'
 
@@ -79,12 +80,17 @@ export default {
         },
     },
     methods: {
+        ...mapActions('journal', ['updateEntry']),
         loadEntry() {
             const entry = this.getEntryById( this.id )
             if ( !entry ) return this.$router.push({ name: 'no-entry' })
 
             this.entry = entry
-        }
+        },
+        async saveEntry() {
+
+            this.updateEntry( this.entry )
+        },  
     },
     created() {
         this.loadEntry()
