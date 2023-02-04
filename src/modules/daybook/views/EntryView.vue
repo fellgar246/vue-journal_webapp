@@ -10,6 +10,9 @@
             <div>
                 <input type="file"
                         @change="onSelectedImage"
+                        ref="imageSelector"
+                        v-show="false"
+                        accept="image/png, image/jpeg"
                         >
 
                 <button 
@@ -19,7 +22,8 @@
                     Borrar
                     <i class="fa fa-trash-alt"></i>
                 </button>
-                <button class="btn btn-primary">
+                <button class="btn btn-primary"
+                    @click="onSelectImage">
                     Subir foto
                     <i class="fa fa-upload"></i>
                 </button>
@@ -34,10 +38,11 @@
             ></textarea>
         </div>
 
-        <!-- <img 
-            src="https://www.viajar365.com/wp-content/uploads/2021/07/bergen.jpg" 
+        <img 
+            v-if="entry.picture && !localImage"
+            :src="entry.picture"
             alt="entry-picture"
-            class="img-thumbnail"> -->
+            class="img-thumbnail">
 
          <img 
             v-if="localImage"
@@ -59,7 +64,8 @@ import { defineAsyncComponent } from 'vue';
 import { mapGetters, mapActions } from 'vuex';
 import Swal from 'sweetalert2';
 
-import getDayMonthYear from '../helpers/getDayMonthYear'
+import getDayMonthYear from '../helpers/getDayMonthYear';
+import uploadImage from '../helpers/uploadImage'; 
 
 export default {
     props: {
@@ -118,6 +124,10 @@ export default {
             })
             Swal.showLoading()
 
+            const picture = await uploadImage( this.file )
+
+            this.entry.picture = picture
+
             if ( this.entry.id ) {
                 await this.updateEntry( this.entry )
             } else {
@@ -126,7 +136,9 @@ export default {
                 this.$router.push({ name: 'entry', params: { id } })
             }
 
+            this.file = null
             Swal.fire('Gurdado', 'Entrada registrada con éxito', 'success')
+
         },  
         async onDeleteEntry() {
 
@@ -168,7 +180,7 @@ export default {
             fr.readAsDataURL( file )
         },
         onSelectImage() {
-            
+            this.$refs.imageSelector.click()
         }
 
     },
